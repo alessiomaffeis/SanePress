@@ -33,6 +33,7 @@ Define as many groups of custom fields as you like and assign them to pages, pos
 
 #### WP-SCSS
 A SCSS compiler. You put your .scss files into the *scss*/ folder of your theme, you get your .css files into the *css*/ folder. Dead simple.
+(Deactivated by default)
 
 #### Rocket Galleries
 This is the gallery management feature missing in WordPress. For some reason somebody decided you can’t just create a gallery whenever you like. Now you can.
@@ -66,12 +67,5 @@ Hopefully not.
 Just clone this repository in the (new or empty) folder you want to install Word… ehm SanePress to:
 
     git clone https://github.com/alessiomaffeis/SanePress.git <path>
-
-and make these two directories writable, in order for WP-SCSS to be able to generate CSS files:
-
-    chmod 777 wp-content/plugins/wp-scss/cache/
-    chmod 777 wp-content/themes/sanepress/css/
-
-(just promise me you’ll never chmod 777 in production).
 
 Then go through the standard WordPress installation steps. That’s it.

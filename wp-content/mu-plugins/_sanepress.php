@@ -31,7 +31,7 @@ function auto_activate_plugins() {
     // Activate required plugins:
     $required_plugins = array(
       "timber-library/timber.php",
-      "wp-scss/wp-scss.php",
+      // "wp-scss/wp-scss.php",
       "advanced-custom-fields/acf.php",
       // "rocket-galleries/rocketgalleries.php"
     );
@@ -45,11 +45,12 @@ function auto_activate_plugins() {
       }
     }
 
+    // OKAY, I give up, for now.
     // Set default options:
-    $wpscss_options = get_option('wpscss_options');
-    $wpscss_options['scss_dir'] = '/scss/';
-    $wpscss_options['css_dir'] = '/css/';
-    update_option('wpscss_options', $wpscss_options);
+    // $wpscss_options = get_option('wpscss_options');
+    // $wpscss_options['scss_dir'] = '/scss/';
+    // $wpscss_options['css_dir'] = '/css/';
+    // update_option('wpscss_options', $wpscss_options);
 
     add_option( 'sanepress_init', 'TRUE', '', 'yes' );
   }
