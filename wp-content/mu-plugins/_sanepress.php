@@ -44,6 +44,9 @@ function auto_activate_plugins() {
         error_log($result->get_error_message());
       }
     }
+    
+    // Activate the default theme
+    switch_theme("sanepress");
 
     // OKAY, I give up, for now.
     // Set default options:
