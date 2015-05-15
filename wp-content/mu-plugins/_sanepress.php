@@ -31,9 +31,9 @@ function auto_activate_plugins() {
     // Activate required plugins:
     $required_plugins = array(
       "timber-library/timber.php",
-      "wp-scss/wp-scss.php",
       "advanced-custom-fields/acf.php",
-      // "rocket-galleries/rocketgalleries.php"
+      "rocket-galleries/rocketgalleries.php",
+      "wp-scss/wp-scss.php"
     );
 
     foreach ($required_plugins as $plugin) {
