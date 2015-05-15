@@ -8,7 +8,7 @@ The news is that YOU ARE NOT ALONE. Just clone the *SanePress* repository in you
 
 ### What is SanePress?
 
-Basically, it is just a standard WordPress installation complete with some essential plugins pre-installed and pre-activated for your convenience.
+Basically, it is just a standard WordPress installation complete with some essential plugins pre-installed, pre-configured, pre-activated, pre-anything. For your convenience.
 
 ### Which plugins are bundled with SanePress?
 
@@ -33,11 +33,9 @@ Define as many groups of custom fields as you like and assign them to pages, pos
 
 #### WP-SCSS
 A SCSS compiler. You put your .scss files into the *scss*/ folder of your theme, you get your .css files into the *css*/ folder. Dead simple.
-(Deactivated by default)
 
 #### Rocket Galleries
 This is the gallery management feature missing in WordPress. For some reason somebody decided you can’t just create a gallery whenever you like. Now you can.
-(Deactivated by default)
 
 #### Custom Post Types
 There are a few different ways to define custom post types, and each comes with its own pros and cons. SanePress encourages to do it inside a site-specific (thus not linked to any theme), “Must Use” plugin (i.e. one that is loaded automatically and it’s not listed in the Plugins section of WordPress’ control panel).
@@ -68,5 +66,12 @@ Hopefully not.
 Just clone this repository in the (new or empty) folder you want to install Word… ehm SanePress to:
 
     git clone https://github.com/alessiomaffeis/SanePress.git <path>
+
+and make these two directories writable, in order for WP-SCSS to be able to generate CSS files:
+
+    chmod 777 wp-content/plugins/wp-scss/cache/
+    chmod 777 wp-content/themes/sanepress/css/
+
+(just promise me you’ll never chmod 777 in production).
 
 Then go through the standard WordPress installation steps. That’s it.
