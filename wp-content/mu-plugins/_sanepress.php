@@ -52,6 +52,8 @@ function auto_activate_plugins() {
     $wpscss_options = get_option('wpscss_options');
     $wpscss_options['scss_dir'] = '/scss/';
     $wpscss_options['css_dir'] = '/css/';
+    $wpscss_options['compiling_options'] = 'scss_formatter';
+    $wpscss_options['errors'] = 'show';
     update_option('wpscss_options', $wpscss_options);
 
     add_option( 'sanepress_init', 'TRUE', '', 'yes' );
