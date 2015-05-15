@@ -8,7 +8,7 @@ The news is that YOU ARE NOT ALONE. Just clone the *SanePress* repository in you
 
 ### What is SanePress?
 
-Basically, it is just a standard WordPress installation complete with some essential plugins pre-installed, pre-configured, pre-activated, pre-anything. For your convenience.
+Basically, it is just a standard WordPress installation complete with some essential plugins pre-installed and pre-activated for your convenience.
 
 ### Which plugins are bundled with SanePress?
 
@@ -37,6 +37,7 @@ A SCSS compiler. You put your .scss files into the *scss*/ folder of your theme,
 
 #### Rocket Galleries
 This is the gallery management feature missing in WordPress. For some reason somebody decided you can’t just create a gallery whenever you like. Now you can.
+(Deactivated by default)
 
 #### Custom Post Types
 There are a few different ways to define custom post types, and each comes with its own pros and cons. SanePress encourages to do it inside a site-specific (thus not linked to any theme), “Must Use” plugin (i.e. one that is loaded automatically and it’s not listed in the Plugins section of WordPress’ control panel).
