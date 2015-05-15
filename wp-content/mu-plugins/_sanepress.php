@@ -28,6 +28,9 @@ function auto_activate_plugins() {
 
     require_once($home_path . "wp-admin/includes/plugin.php");
 
+    // Activate the default theme
+    switch_theme("sanepress");
+
     // Activate required plugins:
     $required_plugins = array(
       "timber-library/timber.php",
@@ -45,9 +48,6 @@ function auto_activate_plugins() {
       }
     }
     
-    // Activate the default theme
-    switch_theme("sanepress");
-
     //Set default options:
     $wpscss_options = get_option('wpscss_options');
     $wpscss_options['scss_dir'] = '/scss/';
