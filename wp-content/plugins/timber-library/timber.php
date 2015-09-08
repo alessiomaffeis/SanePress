@@ -4,7 +4,7 @@ Plugin Name: Timber
 Plugin URI: http://timber.upstatement.com
 Description: The WordPress Timber Library allows you to write themes using the power Twig templates
 Author: Jared Novack + Upstatement
-Version: 0.21.3
+Version: 0.21.9
 Author URI: http://upstatement.com/
 */
 
@@ -16,6 +16,7 @@ global $timber;
 // and finally in the current themes directories
 if (   file_exists( $composer_autoload = __DIR__ . '/vendor/autoload.php' ) /* check in self */
 	|| file_exists( $composer_autoload = WP_CONTENT_DIR.'/vendor/autoload.php') /* check in wp-content */
+	|| file_exists( $composer_autoload = plugin_dir_path( __FILE__ ).'vendor/autoload.php') /* check in plugin directory */
 	|| file_exists( $composer_autoload = get_stylesheet_directory().'/vendor/autoload.php') /* check in child theme */
 	|| file_exists( $composer_autoload = get_template_directory().'/vendor/autoload.php') /* check in parent theme */
 	) {
@@ -165,16 +166,6 @@ class Timber {
 	}
 
 	/**
-	 * @param array   $results
-	 * @param string  $PostClass
-	 * @return TimberPostsCollection
-	 * @deprecated since 0.20.0
-	 */
-	static function handle_post_results( $results, $PostClass = 'TimberPost' ) {
-		return TimberPostGetter::handle_post_results( $results, $PostClass );
-	}
-
-	/**
 	 * @param unknown $query
 	 * @return int
 	 * @deprecated since 0.20.0
@@ -217,7 +208,7 @@ class Timber {
 	public static function get_sites( $blog_ids = false ) {
 		if ( !is_array( $blog_ids ) ) {
 			global $wpdb;
-			$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+			$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs ORDER BY blog_id ASC" );
 		}
 		$return = array();
 		foreach ( $blog_ids as $blog_id ) {
@@ -235,7 +226,7 @@ class Timber {
 	 */
 	public static function get_context() {
 		$data = array();
-		$data['http_host'] = 'http://' . $_SERVER['HTTP_HOST'];
+		$data['http_host'] = 'http://' . TimberURLHelper::get_host();
 		$data['wp_title'] = TimberHelper::get_wp_title();
 		$data['wp_head'] = TimberHelper::function_wrapper( 'wp_head' );
 		$data['wp_footer'] = TimberHelper::function_wrapper( 'wp_footer' );
@@ -259,6 +250,7 @@ class Timber {
 			}
 		}
 		$data = apply_filters( 'timber_context', $data );
+		$data = apply_filters( 'timber/context', $data );
 		return $data;
 	}
 
@@ -304,6 +296,7 @@ class Timber {
 		$dummy_loader->get_twig();
 		$loader = new Twig_Loader_String();
 		$twig = new Twig_Environment( $loader );
+		$twig = apply_filters( 'timber/twig/filters', $twig );
 		$twig = apply_filters( 'twig_apply_filters', $twig );
 		return $twig->render( $string, $data );
 	}
@@ -445,6 +438,7 @@ class Timber {
 		global $wp_query;
 		global $paged;
 		global $wp_rewrite;
+		$args = array();
 		$args['total'] = ceil( $wp_query->found_posts / $wp_query->query_vars['posts_per_page'] );
 		if ( $wp_rewrite->using_permalinks() ) {
 			$url = explode( '?', get_pagenum_link( 0 ) );
@@ -467,6 +461,7 @@ class Timber {
 		} else {
 			$args = array_merge( $args, $prefs );
 		}
+		$data = array();
 		$data['pages'] = TimberHelper::paginate_links( $args );
 		$next = get_next_posts_page_link( $args['total'] );
 		if ( $next ) {

@@ -3,8 +3,8 @@ Contributors: connectthink
 Tags: sass, scss, css
 Plugin URI: https://github.com/ConnectThink/WP-SCSS
 Requires at least: 3.0.1
-Tested up to: 3.8
-Stable tag: 1.1.6
+Tested up to: 4.3
+Stable tag: 1.1.9
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl.html
 
@@ -62,6 +62,16 @@ Make sure your directories are properly defined in the settings. Paths are defin
 If you are having issues with the plugin, create an issue on [github](https://github.com/ConnectThink/WP-SCSS), and we'll do our best to help.
 
 == Changelog ==
+= 1.1.9 =
+* Added filter to set variables via PHP [@ohlle](https://github.com/ohlle)
+* Added option to minify CSS output [@mndewitt](https://github.com/mndewitt)
+
+= 1.1.8 =
+Various improvements from pull requests by [@jbrains](https://github.com/jbrains) and [@brainfork](https://github.com/brainfork)
+
+= 1.1.7 =
+* Update scssphp to 0.0.12 - pull from #16 [@GabrielGil](https://github.com/GabrielGil)
+
 = 1.1.6 =
 * Upgraded scss.inc.php to version 0.0.10; via pull request from [kirkhoff](https://github.com/kirkhoff)
 
