@@ -16,6 +16,8 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     public $user_id;
     public $comment_author;
 
+    public $children = array();
+
     /**
      * @param int $cid
      */
@@ -28,6 +30,7 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * @internal
      * @param integer $cid
      */
     function init($cid) {
@@ -43,6 +46,7 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * @api
      * @return TimberUser
      */
     public function author() {
@@ -60,15 +64,15 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * Fetches the Gravatar
+     * ```twig
+     * {{comment.avatar(36,template_uri~"/img/dude.jpg")}}
+     * ```
      * @param int $size
      * @param string $default
      * @return bool|mixed|string
      */
     public function avatar($size = 92, $default = '') {
-        // Fetches the Gravatar
-        // use it like this
-        // {{comment.avatar(36,template_uri~"/img/dude.jpg")}}
-
         if (!get_option('show_avatars')) {
             return false;
         }
@@ -84,7 +88,7 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
         $host = $this->avatar_host($email_hash);
         $default = $this->avatar_default($default, $email, $size, $host);
         if (!empty($email)) {
-            $avatar = $this->avatar_out($email, $default, $host, $email_hash, $size);
+            $avatar = $this->avatar_out($default, $host, $email_hash, $size);
         } else {
             $avatar = $default;
         }
@@ -92,24 +96,29 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * @api
      * @return string
      */
     public function content() {
-        return $this->comment_content;
+        return apply_filters('get_comment_text ', $this->comment_content);
     }
 
     /**
-     * @return string
+     * @api
+     * @return boolean
      */
-    public function status() {
-        return $this->comment_status;
+    public function approved() {
+        return $this->comment_approved;
     }
 
     /**
+     * @api
      * @return string
      */
-    public function date() {
-        return $this->comment_date;
+    public function date( $date_format = '' ) {
+    	$df = $date_format ? $date_format : get_option('date_format');
+		$the_date = (string)mysql2date($df, $this->comment_date);
+		return apply_filters('get_comment_date ', $the_date, $df);
     }
 
     /**
@@ -121,10 +130,18 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * @api
+     * @return bool
+     */
+    public function is_child() {
+        return $this->comment_parent > 0;
+    }
+
+    /**
      * @param int $comment_id
      * @return mixed
      */
-    private function get_meta_fields($comment_id = null) {
+    protected function get_meta_fields($comment_id = null) {
         if ($comment_id === null) {
             $comment_id = $this->ID;
         }
@@ -144,7 +161,7 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
      * @param string $field_name
      * @return mixed
      */
-    private function get_meta_field($field_name) {
+    protected function get_meta_field($field_name) {
         $value = apply_filters('timber_comment_get_meta_field_pre', null, $this->ID, $field_name, $this);
         if ($value === null) {
             $value = get_comment_meta($this->ID, $field_name, true);
@@ -157,9 +174,10 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     ======================= */
 
     /**
+     * @internal
      * @return string
      */
-    private function avatar_email() {
+    protected function avatar_email() {
         $id = (int)$this->user_id;
         $user = get_userdata($id);
         if ($user) {
@@ -171,10 +189,11 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * @internal
      * @param string $email_hash
      * @return string
      */
-    private function avatar_host($email_hash) {
+    protected function avatar_host($email_hash) {
         if (is_ssl()) {
             $host = 'https://secure.gravatar.com';
         } else {
@@ -188,14 +207,15 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
     }
 
     /**
+     * @internal
+     * @todo  what if it's relative?
      * @param string $default
      * @param string $email
      * @param string $size
      * @param string $host
      * @return string
      */
-    private function avatar_default($default, $email, $size, $host) {
-        # what if its relative.
+    protected function avatar_default($default, $email, $size, $host) {
         if (substr($default, 0, 1) == '/') {
             $default = home_url() . $default;
         }
@@ -219,22 +239,19 @@ class TimberComment extends TimberCore implements TimberCoreInterface {
             $default = $host . '/avatar/?s=' . $size;
         } else if (empty($email) && !strstr($default, 'http://')) {
             $default = $host . '/avatar/?d=' . $default . '&amp;s=' . $size;
-        } else if (strpos($default, 'http://') === 0) {
-            //theyre just linking to an image so don't do anything else
-            //$default = add_query_arg( 's', $size, $default );
         }
         return $default;
     }
 
     /**
-     * @param string $email
+     * @internal
      * @param string $default
      * @param string $host
      * @param string $email_hash
      * @param string $size
      * @return mixed
      */
-    private function avatar_out($email, $default, $host, $email_hash, $size) {
+    protected function avatar_out($default, $host, $email_hash, $size) {
         $out = $host . '/avatar/' . $email_hash . '?s=' . $size . '&amp;d=' . urlencode($default);
         $rating = get_option('avatar_rating');
         if (!empty($rating)) {

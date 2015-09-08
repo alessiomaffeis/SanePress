@@ -71,7 +71,7 @@ class Wp_Scss {
           }
         } else {
           $errors = array (
-            'file' => "/wp-plugins/wp-scss/cache/",
+            'file' => $cache,
             'message' => "File Permission Error, permission denied. Please make the cache directory writable."
           );
           array_push($instance->compile_errors, $errors);
@@ -133,6 +133,10 @@ class Wp_Scss {
    * @return bool - true if compiling is needed
    */
     public function needs_compiling() {
+      if (defined('WP_SCSS_ALWAYS_RECOMPILE') && WP_SCSS_ALWAYS_RECOMPILE) {
+        return true;
+      }
+
       $latest_scss = 0;
       $latest_css = 0;
 
@@ -189,6 +193,11 @@ class Wp_Scss {
           wp_enqueue_style( $name );
         }
       }
+  }
+
+  public function set_variables(array $variables) {
+      global $scssc;
+      $scssc->setVariables($variables);
   }
 
 } // End Wp_Scss Class

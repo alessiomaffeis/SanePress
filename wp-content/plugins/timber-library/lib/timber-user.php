@@ -25,63 +25,69 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	 */
 	function __toString() {
 		$name = $this->name();
-		if (strlen($name)) {
+		if ( strlen($name) ) {
 			return $name;
 		}
-		if (strlen($this->name)) {
+		if ( strlen($this->name) ) {
 			return $this->name;
 		}
 		return '';
 	}
 
 	/**
+	 * @internal
 	 * @param string $field_name
 	 * @return null
 	 */
 	function get_meta($field_name) {
-		return $this->get_meta_field( $field_name );
+		return $this->get_meta_field($field_name);
 	}
 
 	/**
+	 * @internal
 	 * @param string $field
 	 * @param mixed $value
 	 */
 	function __set($field, $value) {
-		if ($field == 'name') {
+		if ( $field == 'name' ) {
 			$this->display_name = $value;
 		}
 		$this->$field = $value;
 	}
 
 	/**
+	 * @internal
 	 * @return string
 	 */
 	public function get_link() {
-		if (!$this->_link) {
+		if ( !$this->_link ) {
 			$this->_link = untrailingslashit(get_author_posts_url($this->ID));
 		}
 		return $this->_link;
 	}
 
 	/**
+	 * @internal
 	 * @param int|bool $uid
 	 */
-	function init($uid = false) {
-		if ($uid === false) {
+	protected function init($uid = false) {
+		if ( $uid === false ) {
 			$uid = get_current_user_id();
 		}
-		if (is_object($uid) || is_array($uid)){
+		if ( is_object($uid) || is_array($uid) ) {
 			$data = $uid;
-			if (is_array($uid)){
-				$data =  (object) $uid;
+			if ( is_array($uid) ) {
+				$data = (object) $uid;
 			}
 			$uid = $data->ID;
 		}
-		if (is_numeric($uid)) {
+		if ( is_numeric($uid) ) {
 			$data = get_userdata($uid);
+		} else if ( is_string($uid) ) { 
+			$data = get_user_by('login', $uid);
 		}
-		if (isset($data) && is_object($data)) {
-			if (isset($data->data)){
+		if ( isset($data) && is_object($data) ) {
+			if ( isset($data->data) ) {
 				$this->import($data->data);
 			} else {
 				$this->import($data);
@@ -99,7 +105,7 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	function get_meta_field($field_name) {
 		$value = null;
 		$value = apply_filters('timber_user_get_meta_field_pre', $value, $this->ID, $field_name, $this);
-		if ($value === null) {
+		if ( $value === null ) {
 			$value = get_user_meta($this->ID, $field_name, true);
 		}
 		$value = apply_filters('timber_user_get_meta_field', $value, $this->ID, $field_name, $this);
@@ -110,15 +116,15 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	 * @return array|null
 	 */
 	function get_custom() {
-		if ($this->ID) {
+		if ( $this->ID ) {
 			$um = array();
 			$um = apply_filters('timber_user_get_meta_pre', $um, $this->ID, $this);
-			if (empty($um)) {
+			if ( empty($um) ) {
 				$um = get_user_meta($this->ID);
 			}
 			$custom = array();
 			foreach ($um as $key => $value) {
-				if (is_array($value) && count($value) == 1) {
+				if ( is_array($value) && count($value) == 1 ) {
 					$value = $value[0];
 				}
 				$custom[$key] = maybe_unserialize($value);
@@ -135,13 +141,15 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	}
 
 	/**
-	 * @return string
+	 * @api
+	 * @return string the human-friendly name of the user (ex: "Buster Bluth")
 	 */
 	function name() {
 		return $this->display_name;
 	}
 
 	/**
+	 * @deprecated 0.21.8
 	 * @return string
 	 */
 	function get_permalink() {
@@ -149,6 +157,7 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	}
 
 	/**
+	 * @deprecated 0.21.8
 	 * @return string
 	 */
 	function permalink() {
@@ -156,6 +165,7 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	}
 
 	/**
+	 * @internal
 	 * @return string ex: /author/lincoln
 	 */
 	function get_path() {
@@ -171,6 +181,7 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	function path() {
@@ -178,6 +189,7 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	function slug() {
@@ -185,6 +197,7 @@ class TimberUser extends TimberCore implements TimberCoreInterface {
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	function link() {
