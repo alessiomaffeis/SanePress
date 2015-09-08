@@ -69,6 +69,7 @@ Just clone this repository in the (new or empty) folder you want to install Word
 
 and make these two directories writable, in order for WP-SCSS to be able to generate CSS files:
 
+    mkdir -p  wp-content/plugins/wp-scss/cache/
     chmod 777 wp-content/plugins/wp-scss/cache/
     chmod 777 wp-content/themes/sanepress/css/
 
