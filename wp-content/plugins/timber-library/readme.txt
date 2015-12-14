@@ -1,9 +1,9 @@
 === Timber ===
-Contributors: jarednova
+Contributors: jarednova, lggorman
 Tags: template engine, templates, twig
 Requires at least: 3.7
-Stable tag: 0.21.9
-Tested up to: 4.2.3
+Stable tag: 0.22.3
+Tested up to: 4.3.1
 PHP version: 5.3.0 or greater
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -17,7 +17,7 @@ Once Timber is installed and activated in your plugin directory, it gives any Wo
 
 ### Looking for docs?
 * **[Project Page](http://upstatement.com/timber)**
-* [Timber Documentation](https://github.com/jarednova/timber/wiki/)
+* [Timber Documentation](https://jarednova.github.io/timber/)
 * [Twig Reference (from SensioLabs)](http://twig.sensiolabs.org/doc/templates.html)
 _Twig is the template language powering Timber; if you need a little background on what a template language is, [Twig's homepage has an overview](http://twig.sensiolabs.org/)_
 * **[Video Tutorials](https://github.com/jarednova/timber/wiki/Video-Tutorials)**
@@ -40,6 +40,32 @@ Timber is great for any WordPress developer who cares about writing good, mainta
 
 
 == Changelog ==
+
+= 0.22.3 =
+* Fixed-up conditional for when comments are being moderated (thanks @lggorman)
+* Fixed hooks for when attachments are deleted (thanks @lgaechter)
+* Added a new filter for `list` (thanks @lggorman)
+
+= 0.22.2 =
+* New .time method for TimberPost and TimberComment (thanks @lggorman)
+* Added support for WordPress's quality filter when resizing (thanks @t-wright)
+* Added support for animated gifs
+
+= 0.22.1 =
+* Added better support for [post.get_terms](https://github.com/jarednova/timber/pull/737) (thanks @aaemnnosttv)
+* Fix for issue with ACF date field (thanks @rpkoller)
+* Fix for resizing jpEgs (thanks @eaton)
+
+= 0.22.0 =
+* Added fetch method to Timber (thanks @xavivars and @erik-landvall)
+* Added a total to the pagination data array (thanks @lggorman)
+* Threaded comments get some love! (thanks @josephbergdoll)
+* A fix to date parsing when handling numeric timestamps (thanks @xavivars)
+
+= 0.21.10 =
+* Removed deprecated twitterify function
+* Much more docs (and deprecation docs)
+* Fixed issues with using constants (thanks @xavivars)
 
 = 0.21.9 =
 * Much much much more inline docs

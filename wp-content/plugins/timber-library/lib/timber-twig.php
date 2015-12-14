@@ -68,6 +68,7 @@ class TimberTwig {
 		$twig->addFilter( new Twig_SimpleFilter( 'shortcodes', 'do_shortcode' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'time_ago', array( $this, 'time_ago' ) ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'wpautop', 'wpautop' ) );
+		$twig->addFilter( new Twig_SimpleFilter( 'list', array( $this, 'add_list_separators' ) ) );
 
 		$twig->addFilter( new Twig_SimpleFilter( 'relative', function ( $link ) {
 					return TimberURLHelper::get_rel_url( $link, true );
@@ -266,6 +267,8 @@ class TimberTwig {
 
 		if ( $date instanceof DateTime ) {
 			$timestamp = $date->getTimestamp();
+		} else if (is_numeric( $date ) && strtotime( $date ) === false ) {
+			$timestamp = intval( $date );
 		} else {
 			$timestamp = strtotime( $date );
 		}
@@ -313,6 +316,28 @@ class TimberTwig {
 		} else {
 			return sprintf( $format_future, human_time_diff( $to, $from ) );
 		}
+	}
+
+	/**
+	 * @param array $arr
+	 * @param string $first_delimiter
+	 * @param string $second_delimiter
+	 * @return string
+	 */
+	function add_list_separators( $arr, $first_delimiter = ',', $second_delimiter = 'and' ) {
+		$length = count( $arr );
+		$list = '';
+		foreach( $arr as $index => $item ) {
+			if ( $index < $length - 2 ) {
+				$delimiter = $first_delimiter.' ';
+			} elseif ( $index == $length - 2 ) {
+				$delimiter = ' '.$second_delimiter.' ';
+			} else {
+				$delimiter = '';
+			}
+			$list = $list.$item.$delimiter;
+		}
+		return $list;
 	}
 
 }
