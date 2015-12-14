@@ -1,5 +1,35 @@
 <?php
-
+/**
+ * The TimberArchives class is used to generate a menu based on the date archives of your posts. The [Nieman Foundation News site](http://nieman.harvard.edu/news/) has an example of how the output can be used in a real site ([screenshot](https://cloud.githubusercontent.com/assets/1298086/9610076/3cdca596-50a5-11e5-82fd-acb74c09c482.png)).
+ * @example
+ * ```php
+ * $context['archives'] = new TimberArchives( $args );
+ * ```
+ * ```twig
+ * <ul>
+ * {% for item in archives.items %}
+ *     <li><a href="{{item.link}}">{{item.name}}</a></li>
+ *     {% for child in item.children %}
+ *         <li class="child"><a href="{{child.link}}">{{child.name}}</a></li>
+ *     {% endfor %}
+ * {% endfor %}
+ * </ul>
+ * ```
+ * ```html
+ * <ul>
+ *     <li>2015</li>
+ *     <li class="child">May</li>
+ *     <li class="child">April</li>
+ *     <li class="child">March</li>
+ *     <li class="child">February</li>
+ *     <li class="child">January</li>
+ *     <li>2014</li>
+ *     <li class="child">December</li>
+ *     <li class="child">November</li>
+ *     <li class="child">October</li>
+ * </ul>
+ * ```
+ */
 class TimberArchives extends TimberCore {
 
 	public $base = '';
@@ -9,6 +39,21 @@ class TimberArchives extends TimberCore {
 	 */
 	public $items;
 
+	/**
+	 * @api
+	 * @param $args array of arguments {
+	 *     @type bool show_year => false
+	 *     @type string
+	 *     @type string type => 'monthly-nested'
+	 *     @type int limit => -1
+	 *     @type bool show_post_count => false
+	 *     @type string order => 'DESC'
+	 *     @type string post_type => 'post'
+	 *     @type bool show_year => false
+	 *     @type bool nested => false
+	 * }
+	 * @param string $base any additional paths that need to be prepended to the URLs that are generated, for example: "tags"
+	 */
 	function __construct( $args = null, $base = '' ) {
 		$this->init($args, $base);
 	}
@@ -49,7 +94,7 @@ class TimberArchives extends TimberCore {
 	protected function get_items_yearly( $args, $last_changed, $join, $where, $order, $limit ) {
 		global $wpdb;
 		$output = array();
-		$query = "SELECT YEAR(post_date) AS `year`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date) ORDER BY post_date $order $limit";
+		$query = "SELECT YEAR(post_date) AS `year`, count(ID) as posts FROM {$wpdb->posts} $join $where GROUP BY YEAR(post_date) ORDER BY post_date $order $limit";
 		$key = md5($query);
 		$key = "wp_get_archives:$key:$last_changed";
 		if (!$results = wp_cache_get($key, 'posts')) {
@@ -181,7 +226,8 @@ class TimberArchives extends TimberCore {
 			$archive_week_end_date_format = get_option('date_format');
 		}
 
-		$where = apply_filters('getarchives_where', 'WHERE post_type = "' . $post_type . '" AND post_status = "publish"', $args);
+		$where = $wpdb->prepare('WHERE post_type = "%s" AND post_status = "publish"', $post_type);
+		$where = apply_filters('getarchives_where', $where, $args);
 		$join = apply_filters('getarchives_join', '', $args);
 
 		$output = array();
