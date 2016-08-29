@@ -65,7 +65,7 @@ Hopefully not.
 
 Just clone this repository in the (new or empty) folder you want to install Word… ehm SanePress to:
 
-    git clone https://github.com/alessiomaffeis/SanePress.git <path>
+    git clone --depth 1 https://github.com/alessiomaffeis/SanePress.git <path>
 
 and make these two directories writable, in order for WP-SCSS to be able to generate CSS files:
 
