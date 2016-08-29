@@ -12,10 +12,11 @@
 					{{post.content}}
 				</div>
 			</section>
+		{% if post.comment_status != 'closed' %}
 			<section class="comments">
 				<div class="respond">
 					<h3 class="h2">Comments</h3>
-					{{ comment_form }}
+					{{ fn('comment_form') }}
 				</div>
 				<div class="responses">
 					{% for cmt in post.get_comments() %}
@@ -23,6 +24,7 @@
 					{% endfor %}
 				</div>
 			</section>
+		{% endif %}
 		</article>
 	</div><!-- /content-wrapper -->
 {% endblock %}

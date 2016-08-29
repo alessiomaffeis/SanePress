@@ -8,6 +8,4 @@ $baseDir = dirname($vendorDir);
 return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Routes' => array($vendorDir . '/upstatement/routes'),
-    'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src'),
-    'Asm89\\Twig\\CacheExtension\\' => array($vendorDir . '/asm89/twig-cache-extension/lib'),
 );
