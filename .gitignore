@@ -13,3 +13,6 @@ ignore/
 ehthumbs.db
 Thumbs.db
 .htaccess
+
+wp-content/themes/sanepress/scss/*.scss
+wp-content/themes/sanepress/css/*.css
