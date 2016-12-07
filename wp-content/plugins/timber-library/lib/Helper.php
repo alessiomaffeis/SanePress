@@ -15,11 +15,11 @@ class Helper {
 	 * @api
 	 * @example
 	 * ```php
-	 * $favorites = Timber::transient('user-'.$uid.'-favorites', function() use ($uid) {
+	 * $context = Timber::get_context();
+	 * $context['favorites'] = Timber\Helper::transient('user-' .$uid. '-favorites', function() use ($uid) {
 	 *  	//some expensive query here that's doing something you want to store to a transient
 	 *  	return $favorites;
 	 * }, 600);
-	 * Timber::context['favorites'] = $favorites;
 	 * Timber::render('single.twig', $context);
 	 * ```
 	 *
@@ -218,83 +218,36 @@ class Helper {
 		return trim(wp_title($separator, false, $seplocation));
 	}
 
-	/* Text Utilities
-	======================== */
+	/* Text Utitilites */
 
-	/**
-	 *
-	 *
-	 * @param string  $text
-	 * @param int     $num_words
-	 * @param string|null|false  $more text to appear in "Read more...". Null to use default, false to hide
-	 * @param string  $allowed_tags
-	 * @return string
-	 */
-	public static function trim_words( $text, $num_words = 55, $more = null, $allowed_tags = 'p a span b i br blockquote' ) {
-		if ( null === $more ) {
-			$more = __('&hellip;');
-		}
-		$original_text = $text;
-		$allowed_tag_string = '';
-		foreach ( explode(' ', apply_filters('timber/trim_words/allowed_tags', $allowed_tags)) as $tag ) {
-			$allowed_tag_string .= '<'.$tag.'>';
-		}
-		$text = strip_tags($text, $allowed_tag_string);
-		/* translators: If your word count is based on single characters (East Asian characters), enter 'characters'. Otherwise, enter 'words'. Do not translate into your own language. */
-		if ( 'characters' == _x('words', 'word count: words or characters?') && preg_match('/^utf\-?8$/i', get_option('blog_charset')) ) {
-			$text = trim(preg_replace("/[\n\r\t ]+/", ' ', $text), ' ');
-			preg_match_all('/./u', $text, $words_array);
-			$words_array = array_slice($words_array[0], 0, $num_words + 1);
-			$sep = '';
-		} else {
-			$words_array = preg_split("/[\n\r\t ]+/", $text, $num_words + 1, PREG_SPLIT_NO_EMPTY);
-			$sep = ' ';
-		}
-		if ( count($words_array) > $num_words ) {
-			array_pop($words_array);
-			$text = implode($sep, $words_array);
-			$text = $text.$more;
-		} else {
-			$text = implode($sep, $words_array);
-		}
-		$text = self::close_tags($text);
-		return apply_filters('wp_trim_words', $text, $num_words, $more, $original_text);
-	}
 
-	/**
-	 *
-	 *
-	 * @param string  $html
-	 * @return string
-	 */
-	public static function close_tags( $html ) {
-		//put all opened tags into an array
-		preg_match_all('#<([a-z]+)(?: .*)?(?<![/|/ ])>#iU', $html, $result);
-		$openedtags = $result[1];
-		//put all closed tags into an array
-		preg_match_all('#</([a-z]+)>#iU', $html, $result);
-		$closedtags = $result[1];
-		$len_opened = count($openedtags);
-		// all tags are closed
-		if ( count($closedtags) == $len_opened ) {
-			return $html;
-		}
-		$openedtags = array_reverse($openedtags);
-		// close tags
-		for ( $i = 0; $i < $len_opened; $i++ ) {
-			if ( !in_array($openedtags[$i], $closedtags) ) {
-				$html .= '</'.$openedtags[$i].'>';
-			} else {
-				unset($closedtags[array_search($openedtags[$i], $closedtags)]);
-			}
-		}
-		$html = str_replace(array('</br>', '</hr>', '</wbr>'), '', $html);
-		$html = str_replace(array('<br>', '<hr>', '<wbr>'), array('<br />', '<hr />', '<wbr />'), $html);
-		return $html;
-	}
 
 	/* Object Utilities
 	======================== */
+
+	/**
+     * @deprecated since 1.2.0
+     * @see TextHelper::trim_words
+     * @param string  $text
+     * @param int     $num_words
+     * @param string|null|false  $more text to appear in "Read more...". Null to use default, false to hide
+     * @param string  $allowed_tags
+     * @return string
+     */
+    public static function trim_words( $text, $num_words = 55, $more = null, $allowed_tags = 'p a span b i br blockquote' ) {
+        return TextHelper::trim_words($text, $num_words, $more, $allowed_tags);
+    }
+
+     /**
+     * @deprecated since 1.2.0
+     * @see TextHelper::close_tags
+     * @param string  $html
+     * @return string
+     */
+
+    public static function close_tags( $html ) {
+    	return TextHelper::close_tags($html);
+    }
 
 	/**
 	 *
@@ -442,6 +395,25 @@ class Helper {
 	 */
 	public static function isodd( $i ) {
 		return ($i % 2) != 0;
+	}
+
+	/**
+	 * Plucks the values of a certain key from an array of objects
+	 * @param array $array
+	 * @param string $key
+	 */
+	public static function pluck( $array, $key ) {
+		$return = array();
+		foreach ( $array as $obj ) {
+			if ( is_object($obj) && method_exists($obj, $key) ) {
+				$return[] = $obj->$key();
+			} elseif ( is_object($obj) && property_exists($obj, $key) ) {
+				$return[] = $obj->$key;
+			} elseif ( isset($obj[$key]) ) {
+				$return[] = $obj[$key];
+			}
+		}
+		return $return;
 	}
 
 	/* Links, Forms, Etc. Utilities

@@ -12,3 +12,4 @@ ignore/
 .Trashes
 ehthumbs.db
 Thumbs.db
+.htaccess

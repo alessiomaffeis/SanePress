@@ -53,6 +53,7 @@ class Twig {
 		$twig->addFilter(new \Twig_SimpleFilter('stripshortcodes', 'strip_shortcodes'));
 		$twig->addFilter(new \Twig_SimpleFilter('array', array($this, 'to_array')));
 		$twig->addFilter(new \Twig_SimpleFilter('excerpt', 'wp_trim_words'));
+		$twig->addFilter(new \Twig_SimpleFilter('excerpt_chars', array('Timber\TextHelper','trim_characters')));
 		$twig->addFilter(new \Twig_SimpleFilter('function', array($this, 'exec_function')));
 		$twig->addFilter(new \Twig_SimpleFilter('pretags', array($this, 'twig_pretags')));
 		$twig->addFilter(new \Twig_SimpleFilter('sanitize', 'sanitize_title'));
@@ -61,6 +62,8 @@ class Twig {
 		$twig->addFilter(new \Twig_SimpleFilter('wpautop', 'wpautop'));
 		$twig->addFilter(new \Twig_SimpleFilter('list', array($this, 'add_list_separators')));
 
+		$twig->addFilter(new \Twig_SimpleFilter('pluck', array('Timber\Helper', 'pluck')));
+
 		$twig->addFilter(new \Twig_SimpleFilter('relative', function( $link ) {
 					return URLHelper::get_rel_url($link, true);
 				} ));
@@ -68,7 +71,7 @@ class Twig {
 		$twig->addFilter(new \Twig_SimpleFilter('date', array($this, 'intl_date')));
 
 		$twig->addFilter(new \Twig_SimpleFilter('truncate', function( $text, $len ) {
-					return Helper::trim_words($text, $len);
+					return TextHelper::trim_words($text, $len);
 				} ));
 
 		/* actions and filters */
